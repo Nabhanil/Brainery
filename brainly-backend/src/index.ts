@@ -196,8 +196,21 @@ app.post('/api/v1/content',userAuth ,async (req,res)=>{
 
 })
 
-app.get('/api/v1/fetch-content',async (req,res)=>{
-
+app.get('/api/v1/fetch-content',userAuth, async (req,res)=>{
+    try {
+        //@ts-ignore
+        const id = req.id
+        const content = await contentModel.find({userId:id})
+        console.log(content)
+        res.json({
+            content
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message:"Internal server down"
+        })
+    }
 })
 app.post('/api/v1/delete-content',async (req,res)=>{
 
