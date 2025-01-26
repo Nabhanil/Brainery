@@ -4,7 +4,8 @@ import z from 'zod'
 import bcrypt from 'bcrypt'
 import dotenv from "dotenv";
 import jwt from 'jsonwebtoken'
-import { userModel } from './Database/schema';
+import { contentModel, tagModel, userModel } from './Database/schema';
+import { userAuth } from './Middlewares/userAuth';
 
 dotenv.config();
 
@@ -127,7 +128,71 @@ app.post('/api/v1/signin',async (req,res)=>{
 
 })
 
-app.post('/api/v1/content',async (req,res)=>{
+app.post('/api/v1/content',userAuth ,async (req,res)=>{
+    try {
+        const {type, title, link, tag} = req.body
+
+        const requiredBody = z.object({
+            type:z.string(),
+            title:z.string().min(3,{message:"Minimum 3 characters required"}).max(100,{message:"Maximaum 100 characters can be used"}),
+            link:z.string(),
+            tag:z.string()
+        })
+
+        const {success, error} = requiredBody.safeParse(req.body)
+
+        if(!success){
+            console.log(error)
+            res.status(411).json({
+                message:"Invalid input"
+            })
+            return
+        }
+        
+
+        const response = await contentModel.create({
+            type,
+            title,
+            link,
+            tag,
+            //@ts-ignore
+            userId:req.id
+        })
+
+        if (tag) {
+            const tagDocument = await tagModel.findOne();
+            if (tagDocument) {
+                
+                if (!tagDocument.tags.includes(tag)) {
+                    tagDocument.tags.push(tag);
+                    await tagDocument.save();
+                }
+            } else {
+               
+                await tagModel.create({ tags: [tag] });
+            }
+        }
+
+        if(!response){
+            res.status(500).json({
+                message:"Data Entry Failed"
+            })
+            return
+        }
+
+        console.log(response)
+
+        res.status(200).json({
+            response
+        })
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message:"Internal server down"
+        })
+        return
+    }
 
 })
 

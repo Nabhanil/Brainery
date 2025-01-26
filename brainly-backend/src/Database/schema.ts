@@ -25,7 +25,7 @@ const contentSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    tags:{
+    tag:{
         type:String,
     },
     userId:{
@@ -47,7 +47,7 @@ const linkSchema = new mongoose.Schema({
 
 const tagSchema = new mongoose.Schema({
     tags:{
-        type:[]
+        type:[String]
     }
 })
 
