@@ -4,9 +4,9 @@ import z from 'zod'
 import bcrypt from 'bcrypt'
 import dotenv from "dotenv";
 import jwt from 'jsonwebtoken'
-import { contentModel, tagModel, userModel } from './Database/schema';
+import { contentModel, linkModel, tagModel, userModel } from './Database/schema';
 import { userAuth } from './Middlewares/userAuth';
-
+import { random } from './Utils/random';
 dotenv.config();
 
 const url = process.env.MONGO_URI
@@ -15,7 +15,7 @@ const JWT_SECRET = "lucifer"
 
 app.use(express.json())
 
-
+// Added the signup endpoint
 app.post('/api/v1/signup',async (req,res)=>{
     try {
         const {name,password} = req.body
@@ -69,8 +69,7 @@ app.post('/api/v1/signup',async (req,res)=>{
     }
 
 })
-
-
+// Added the signin endpoint
 app.post('/api/v1/signin',async (req,res)=>{
     try {
         const {name, password} = req.body
@@ -128,6 +127,7 @@ app.post('/api/v1/signin',async (req,res)=>{
 
 })
 
+// Added the content endpoint
 app.post('/api/v1/content',userAuth ,async (req,res)=>{
     try {
         const {type, title, link, tag} = req.body
@@ -196,11 +196,18 @@ app.post('/api/v1/content',userAuth ,async (req,res)=>{
 
 })
 
+// Added the fetch-content endpoint
 app.get('/api/v1/fetch-content',userAuth, async (req,res)=>{
     try {
         //@ts-ignore
         const id = req.id
         const content = await contentModel.find({userId:id})
+        if(content.length==0){
+            res.status(300).json({
+                message:"No content available"
+            })
+            return
+        }
         console.log(content)
         res.json({
             content
@@ -212,16 +219,123 @@ app.get('/api/v1/fetch-content',userAuth, async (req,res)=>{
         })
     }
 })
-app.post('/api/v1/delete-content',async (req,res)=>{
 
+// Added the delete-content endpoint
+app.post('/api/v1/delete-content',userAuth,async (req,res)=>{
+    try {
+        const {id} = req.body
+        const response = await contentModel.deleteOne({_id:id})
+        console.log(response)
+        if(!response){
+            res.status(500).json({
+                message:"A problem occured while deleting"
+            })
+            return
+        }
+        res.status(200).json({
+            message:"Deleted successfully",
+            response
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message:"Something went wrong in the delete-content route"
+        })
+    }
 })
 
-app.post('/api/v1/share', async (req,res)=>{
+// Added the share endpoint
+app.post('/api/v1/share',userAuth, async (req,res)=>{
+    try {
+        const share = req.body.share
+        if(share){
+            const link = random()
+            console.log(link)
+            const existingHash = await linkModel.findOne({
+                //@ts-ignore
+                userId:req.id
+            })
+            if(existingHash){
+                res.status(200).json({
+                    hash:existingHash.hash,
+                    message:"hash was already prepared"
+                })
+            }else{
+                const response = await linkModel.create({
+                    hash:link,
+                    //@ts-ignore
+                    userId:req.id
+                })
+                if(response){
+                    res.status(200).json({
+                        response:response.hash,
+                        message:"successfully created hash"
+                    })
+                }
+            }
 
+        }else{
+            const existingHash = await linkModel.findOne({
+                //@ts-ignore
+                userId:req.id
+            })
+            if(existingHash){
+                const response = await linkModel.deleteOne({
+                    //@ts-ignore
+                    userId:req.id
+                })
+                console.log(response)
+                if(response){
+                    res.status(200).json({
+                        message:"hash deleted successfully"
+                    })
+                }
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message:"Share is not working"
+        })
+    }
 })
 
+// Added the shareId param route
 app.get('/api/v1/brain/:shareid',async(req,res)=>{
+    const {shareid} = req.params
 
+    const response = await linkModel.findOne({hash:shareid})
+    if(!response){
+        console.log(response)
+        res.status(404).json({
+            message:"The user has turned off their sharable link"
+        })
+        return
+    }
+    const userId = response.userId
+    const user = await userModel.findOne({
+        _id:userId
+    })
+
+    if(!user){
+        res.status(404).json({
+            message:"User not found"
+        })
+        return
+    }
+
+    const content = await contentModel.find({userId:userId})
+    if(content.length == 0){
+        res.status(200).json({
+            username:user.name,
+            content:"This user has not added any content"
+        })
+    }else{
+        res.status(200).json({
+            username:user.name,
+            content
+        })
+    }
 })
 
 const main = async ()=>{
