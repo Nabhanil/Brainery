@@ -1,11 +1,16 @@
+import { PlusIcon } from "./components/Icons/PlusIcon"
+import { ShareIcon } from "./components/Icons/ShareIcon"
+import { Button } from "./components/Ui/Button"
 
 function App() {
 
 
+
   return (
-    <div>
-      <h1 className="bg-blue-500 text-white text-7xl">Hi There</h1>
-    </div>
+    <>
+      <Button title ="Add Content" size="md" variant="primary" startIcon={<PlusIcon/>}/>
+      <Button title ="Share Brain" size="md" variant="secondary" startIcon={<ShareIcon/>} />
+    </>
   )
 }
 
