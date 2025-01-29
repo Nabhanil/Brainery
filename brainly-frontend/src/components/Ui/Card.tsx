@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 import { YoutubeIcon } from "../Icons/YoutubeIcon";
 import { TwitterIcon } from "../Icons/TwitterIcon";
-import { ArticleIcon } from "../Icons/ArticleIcon";
+import { DocumentIcon } from "../Icons/ArticleIcon";
 
 interface cardProp {
   title: string;
@@ -9,11 +9,12 @@ interface cardProp {
   shareIcon?: ReactElement;
   startIcon?: ReactElement;
   deleteIcon?: ReactElement;
-  link: string;
+  link?: string;
   tags?: string;
+  document?:string
 }
 
-export const Card = ({ title, shareIcon, deleteIcon, link, tags, type }: cardProp) => {
+export const Card = ({ title, shareIcon, deleteIcon, link, tags, type,document }: cardProp) => {
   const getIcon = () => {
     switch (type) {
       case "youtube":
@@ -21,7 +22,7 @@ export const Card = ({ title, shareIcon, deleteIcon, link, tags, type }: cardPro
       case "twitter":
         return <TwitterIcon />;
       case "article":
-        return <ArticleIcon />;
+        return <DocumentIcon />;
       default:
         return null;
     }
@@ -30,7 +31,7 @@ export const Card = ({ title, shareIcon, deleteIcon, link, tags, type }: cardPro
 
   return (
     <div className="border bg-gray-200 w-80 h-80 rounded-xl shadow-md flex flex-col">
-      {/* Header Section */}
+      
       <div className="flex justify-between items-center p-5">
         <div className="flex items-center">
           <div>{getIcon()}</div>
@@ -42,10 +43,10 @@ export const Card = ({ title, shareIcon, deleteIcon, link, tags, type }: cardPro
         </div>
       </div>
 
-      {/* Content Section */}
+      
       <div className="flex justify-center items-center overflow-hidden  px-3">
         <div className="w-full h-full flex justify-center items-center">
-          {type ==="youtube" && <iframe
+          {type ==="youtube" && link && <iframe
             className="w-full h-50 rounded-lg"
             src={link.replace("watch?v=", "embed/")}
             title="YouTube video player"
@@ -54,15 +55,19 @@ export const Card = ({ title, shareIcon, deleteIcon, link, tags, type }: cardPro
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
           ></iframe>}
-          {type==="twitter" && <div className="overflow-auto max-w-full max-h-50">
+          {type==="twitter" && link && <div className="overflow-auto max-w-full max-h-50">
             <blockquote className="twitter-tweet w-full">
+
               <a title="twitter post" href={link.replace("x.com", "twitter.com")}></a>
             </blockquote>
           </div>}
+          {type === "document" && <div className="bg-white px-2 py-1 rounded-md overflow-auto max-w-full max-h-50">
+            {document}
+            </div>}
         </div>
       </div>
 
-      {/* Footer Section */}
+      
       <div className="pt-3 text-center text-gray-600 text-sm">
         {tags ? `${tags}` : "No tags to show"}
       </div>
