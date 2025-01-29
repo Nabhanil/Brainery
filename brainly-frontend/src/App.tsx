@@ -1,11 +1,17 @@
-import { Dashboard } from "./components/Dashboard"
+import { Dashboard } from "./components/Ui/Dashboard"
+
 
 function App() {
 
 
 
   return (
-    <Dashboard/>
+
+      <>
+      
+        <Dashboard/>
+      </>
+    
   )
 }
 

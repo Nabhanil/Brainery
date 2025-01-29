@@ -6,6 +6,7 @@ interface buttonstyles{
     onClick?: ()=> void
     title: string
     startIcon?: ReactElement
+    className?:string
 }
 
 
@@ -20,11 +21,11 @@ const sizeStyles = {
     sm:"px-2 py-1"
 }
 
-const defaultStyles = "rounded-md mx-2 mt-4 text-2xl"
+const defaultStyles = " mx-2 mt-4 text-2xl cursor-pointer"
 
-export const Button = ({variant, size,onClick, title, startIcon}: buttonstyles)=>{
-
-    return <button onClick={()=>onClick} className={`${variantStyles[variant]} ${sizeStyles[size]} ${defaultStyles}`} >
+export const Button = ({variant, size,onClick, title, startIcon , className}: buttonstyles)=>{
+    console.log(className)
+    return <button onClick={onClick} className={`${variantStyles[variant]} ${sizeStyles[size]} ${defaultStyles} ${className}`} >
         <div className="flex justify-center items-center ">
             <div className="pr-2">{startIcon}</div>
             <div>{title}</div>
