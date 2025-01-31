@@ -24,7 +24,6 @@ const sizeStyles = {
 const defaultStyles = " mx-2 mt-4 text-2xl cursor-pointer"
 
 export const Button = ({variant, size,onClick, title, startIcon , className}: buttonstyles)=>{
-    console.log(className)
     return <button onClick={onClick} className={`${variantStyles[variant]} ${sizeStyles[size]} ${defaultStyles} ${className}`} >
         <div className="flex justify-center items-center ">
             <div className="pr-2">{startIcon}</div>

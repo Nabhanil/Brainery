@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CrossIcon } from "../Icons/CrossIcon"
 import { Button } from "./Button"
 import { Input } from "./Input";
@@ -6,6 +6,12 @@ import { Input } from "./Input";
 // @ts-ignore
 export const ComponentModel = ({ open, setOpen }) => {
     const [formType , setFormType] = useState("")
+    
+    const titleRef = useRef<HTMLInputElement | null>(null);
+    const linkRef = useRef<HTMLInputElement | null>(null);
+    const tagRef = useRef<HTMLInputElement | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
     return (
         <div>
             {open && (
@@ -23,11 +29,12 @@ export const ComponentModel = ({ open, setOpen }) => {
                         <div className="flex justify-center">
                             {formType ==="tweet" && (
                                 <div className="mt-2 mr-2 active">
-                                    <form>
-                                        <Input placeholder="title" />
-                                        <Input placeholder="tweeter link" />
+                                    <form >
+                                        <Input referrance={titleRef} placeholder="title" />
+                                        <Input referrance={linkRef} placeholder="tweeter link" />
+                                        <Input referrance={tagRef} placeholder="tags" />
                                         <div className="flex justify-center ">
-                                            <Button className="rounded-4xl" variant={"primary"} size="md" title="submit"/>
+                                            <Button  className="rounded-4xl" variant={"primary"} size="md" title="submit"/>
                                         </div>
                                     </form>
                                 </div>
@@ -35,8 +42,9 @@ export const ComponentModel = ({ open, setOpen }) => {
                             {formType ==="youtube" && (
                                 <div className="mt-2 mr-2 active">
                                 <form>
-                                    <Input placeholder="title " />
-                                    <Input placeholder="youtube link" />
+                                    <Input referrance={titleRef} placeholder="title " />
+                                    <Input referrance={linkRef} placeholder="youtube link" />
+                                    <Input referrance={tagRef} placeholder="tags" />
                                     <div className="flex justify-center ">
                                         <Button className="rounded-4xl" variant={"primary"} size="md" title="submit"/>
                                     </div>
@@ -47,8 +55,9 @@ export const ComponentModel = ({ open, setOpen }) => {
                                 <div className="mt-2 mr-2 active">
                                     <h1>paste your document:</h1>
                                 <form>
-                                    <textarea title="document" className=" m-2 w-80 h-auto outline-none px-3 py-2 border-b-2 border-l shadow-2xs rounded-md"/>
+                                    <textarea ref={textareaRef} title="document" className=" m-2 w-80 h-auto outline-none px-3 py-2 border-b-2 border-l shadow-2xs rounded-md"/>
                                     <Input placeholder="Reference Link(optional)" />
+                                    <Input referrance={tagRef} placeholder="tags" />
                                     <div className="flex justify-center ">
                                         <Button className="rounded-4xl" variant={"primary"} size="md" title="submit"/>
                                     </div>

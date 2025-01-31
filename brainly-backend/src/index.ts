@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import z from 'zod'
 import bcrypt from 'bcrypt'
 import dotenv from "dotenv";
+import cors from 'cors'
 import jwt from 'jsonwebtoken'
 import { contentModel, linkModel, tagModel, userModel } from './Database/schema';
 import { userAuth } from './Middlewares/userAuth';
@@ -14,6 +15,7 @@ const app = express()
 const JWT_SECRET = "lucifer"
 
 app.use(express.json())
+app.use(cors())
 
 // Added the signup endpoint
 app.post('/api/v1/signup',async (req,res)=>{
