@@ -1,5 +1,4 @@
-import {  useEffect, useState } from "react"
-import axios from "axios"
+import {   useState } from "react"
 import { DeletIcon } from "../Icons/DeleteIcon"
 import { PlusIcon } from "../Icons/PlusIcon"
 import { ShareIcon } from "../Icons/ShareIcon"
@@ -7,24 +6,12 @@ import { Button } from "./Button"
 import { Card } from "./Card"
 import { ComponentModel } from "./ComponentModel"
 import SideBar from "./SideBar"
-import { BackendURL } from "../config"
+import { useContent } from "../hooks/UseContent"
 
 
 export const Dashboard = ()=>{
     const [open,setOpen] = useState(false)
-
-    useEffect(()=>{
-        const fetchContent = async ()=>{
-            const token = localStorage.getItem("token")
-            const result = await axios.get(`${BackendURL}/api/v1/fetch-content`,{
-                headers:{
-                    token:token
-                }
-            })
-            console.log(result)
-        }
-        fetchContent()
-    },[])
+    const content = useContent()
 
     return <>
         <SideBar/>
@@ -37,18 +24,23 @@ export const Dashboard = ()=>{
                     <Button onClick={()=>{setOpen(true)}} title ="Add Content" size="md"  variant="primary" startIcon={<PlusIcon/>} className="rounded-md " />
                 </div>
             </div>
-            <div className="flex flex-wrap gap-x-2.5 p-5 ">
-                <Card tags="#life" title="First One" link="https://www.youtube.com/watch?v=Q9OW4iaQl-k" type="youtube" shareIcon={<ShareIcon/>} deleteIcon={<DeletIcon/>}/>
-                <Card title="Second One" link="https://x.com/NabhanilCh2513/status/1883104899761938877" type="twitter" shareIcon={<ShareIcon/>} deleteIcon={<DeletIcon/>}/>
-                <Card 
-                    title="Third One"
-                    document="Good [morning/afternoon/evening], everyone.
-                    Today, I am honored to speak about a topic that is shaping our future at an unprecedented rate—Artificial Intelligence (AI). AI is no longer a concept of science fiction; it is a reality that is transforming our daily lives, industries, and even the way we think. From self-driving cars to intelligent chatbots, AI is revolutionizing the world. But, like any technological advancement, it comes with its challenges."
-                    type="document" 
-                    shareIcon={<ShareIcon/>} 
-                    deleteIcon={<DeletIcon/>}
-                />
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 mx-6">
+                    {content.length > 0 ? (
+                        content.map(({ type, title, link, tag, _id }) => (
+                            <Card 
+                                key={_id} 
+                                tags={tag} 
+                                title={title} 
+                                link={link} 
+                                type={type} 
+                                shareIcon={<ShareIcon />} 
+                                deleteIcon={<DeletIcon />} 
+                            />
+                        ))
+                    ) : (
+                        <p className="text-center text-gray-400 col-span-full">No content available yet.</p>
+                    )}
+                </div>
         </div>
         
     </>

@@ -3,6 +3,7 @@ import { YoutubeIcon } from "../Icons/YoutubeIcon";
 import { TwitterIcon } from "../Icons/TwitterIcon";
 import { DocumentIcon } from "../Icons/ArticleIcon";
 
+
 interface cardProp {
   title: string;
   type: string;
@@ -56,11 +57,15 @@ export const Card = ({ title, shareIcon, deleteIcon, link, tags, type,document }
             allowFullScreen
           ></iframe>}
           {type==="twitter" && link && <div className="overflow-auto max-w-full max-h-50">
-            <blockquote className="twitter-tweet w-full">
+            <blockquote className="twitter-twitter w-full">
 
               <a title="twitter post" href={link.replace("x.com", "twitter.com")}></a>
             </blockquote>
-          </div>}
+            <blockquote className="twitter-tweet w-full"> <a title="x-post" href={link.replace("x.com","twitter.com")}></a>
+            </blockquote>
+            
+          </div>
+          }
           {type === "document" && <div className="bg-white px-2 py-1 rounded-md overflow-auto max-w-full max-h-50">
             {document}
             </div>}

@@ -21,7 +21,7 @@ const sizeStyles = {
     sm:"px-2 py-1"
 }
 
-const defaultStyles = " mx-2 mt-4 text-2xl cursor-pointer"
+const defaultStyles = " mx-2 mt-4 text-2xl cursor-pointer text-center"
 
 export const Button = ({variant, size,onClick, title, startIcon , className}: buttonstyles)=>{
     return <button onClick={onClick} className={`${variantStyles[variant]} ${sizeStyles[size]} ${defaultStyles} ${className}`} >
