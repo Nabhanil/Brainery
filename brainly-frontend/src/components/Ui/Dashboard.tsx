@@ -1,4 +1,5 @@
-import { useState } from "react"
+import {  useEffect, useState } from "react"
+import axios from "axios"
 import { DeletIcon } from "../Icons/DeleteIcon"
 import { PlusIcon } from "../Icons/PlusIcon"
 import { ShareIcon } from "../Icons/ShareIcon"
@@ -6,9 +7,25 @@ import { Button } from "./Button"
 import { Card } from "./Card"
 import { ComponentModel } from "./ComponentModel"
 import SideBar from "./SideBar"
+import { BackendURL } from "../config"
+
 
 export const Dashboard = ()=>{
     const [open,setOpen] = useState(false)
+
+    useEffect(()=>{
+        const fetchContent = async ()=>{
+            const token = localStorage.getItem("token")
+            const result = await axios.get(`${BackendURL}/api/v1/fetch-content`,{
+                headers:{
+                    token:token
+                }
+            })
+            console.log(result)
+        }
+        fetchContent()
+    },[])
+
     return <>
         <SideBar/>
         <div className="ml-72 min-h-screen bg-gray-500">

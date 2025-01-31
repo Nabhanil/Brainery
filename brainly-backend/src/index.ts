@@ -203,9 +203,10 @@ app.get('/api/v1/fetch-content',userAuth, async (req,res)=>{
     try {
         //@ts-ignore
         const id = req.id
+        console.log(id)
         const content = await contentModel.find({userId:id})
         if(content.length==0){
-            res.status(300).json({
+            res.status(404).json({
                 message:"No content available"
             })
             return
